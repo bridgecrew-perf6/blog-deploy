@@ -1,0 +1,51 @@
+# workflow name
+name: 博客自动化部署
+# push 代码至 main 时，运行。
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    # 运行环境
+    runs-on: ubuntu-latest
+  steps:
+  # from: https://github.com/actions/checkout
+  - name: 检查分支
+    uses: actions/checkout@master 
+  # from: https://github.com/actions/setup-node
+  - name: 安装 Node.js
+    uses: actions/setup-node@master
+    with:
+      node-version: "12.x"
+  - name: 安装 Hexo
+    run: |
+      npm install hexo-cli -g
+      npm install
+  - name: 缓存 Hexo
+    uses: actions/cache@v2
+    id: cache
+    with:
+    path: node_modules
+    key: ${{runner.OS}}-${{hashFiles('**/package-lock.json')}}
+  - name: 安装依赖
+    if: steps.cache.outputs.cache-hit != 'true'
+    run: |
+      npm install --save
+  - name: 生成私钥
+    env:
+      HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY }}
+    run: |
+      mkdir -p ~/.ssh/
+      echo "$HEXO_DEPLOY" > ~/.ssh/id_rsa
+      chmod 600 ~/.ssh/id_rsa
+      ssh-keyscan github.com >> ~/.ssh/known_hosts
+  - name: 配置 Git 信息
+    run: |
+      git config --global user.name 'jwj1342'
+      git config --global user.email '739151564@qq.com'
+  - name: 部署 Hexo
+    run: |
+      hexo clean
+      hexo generate
+      hexo deploy
