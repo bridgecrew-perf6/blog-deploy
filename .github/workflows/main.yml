@@ -39,15 +39,14 @@ jobs:
         mkdir -p ~/.ssh/
         echo "$HEXO_DEPLOY" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-      #  ssh-keyscan github.com >> ~/.ssh/known_hosts
-        ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
-        ssh-keygen -R 140.82.112.3
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
     - name: 配置 Git 信息
       run: |
         git config --global user.name 'jwj1342'
         git config --global user.email '739151564@qq.com'
         git config --global core.autocrlf false
-      #  ssh -T git@github.com
+        git config --global https.proxy http://127.0.0.1:1080
+        git config --global https.proxy https://127.0.0.1:1080
     - name: 部署 Hexo
       run: |
         hexo clean
