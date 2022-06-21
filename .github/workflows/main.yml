@@ -41,6 +41,7 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan github.com >> ~/.ssh/known_hosts
         ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
+        ssh-keygen -R 140.82.112.3
     - name: 配置 Git 信息
       run: |
         git config --global user.name 'jwj1342'
