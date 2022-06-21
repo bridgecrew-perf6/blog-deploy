@@ -46,6 +46,7 @@ jobs:
         git config --global user.email "739151564@qq.com"
         git config --global core.autocrlf false
         ssh-agent -s
+        ssh-agent bash
         ssh-add ~/.ssh/id_rsa
         ssh -T git@github.com
     - name: 部署 Hexo
