@@ -48,7 +48,6 @@ jobs:
         ssh-agent -s
         ssh-agent bash
         ssh-add ~/.ssh/id_rsa
-        ssh -T git@github.com
     - name: 部署 Hexo
       run: |
         hexo clean
