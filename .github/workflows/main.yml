@@ -34,7 +34,7 @@ jobs:
         npm install --save
     - name: 生成私钥
       env:
-        HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.ID_RSA }}
+        HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY }}
       run: |
         mkdir -p ~/.ssh/
         echo "$HEXO_DEPLOY" > ~/.ssh/id_rsa
