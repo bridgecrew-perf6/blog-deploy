@@ -1,3 +1,63 @@
-- name: Hexo Action
-  uses: sma11black/hexo-action@v1.0.4
+# workflow name
+name: Auto Deploy
 
+# master branch on push, auto run
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # check it to your workflow can access it
+    # from: https://github.com/actions/checkout
+    - name: 检查分支
+      uses: actions/checkout@master
+
+    # from: https://github.com/actions/setup-node
+    - name: 安装 Node.js
+      uses: actions/setup-node@master
+      with:
+        node-version: "12.x"
+
+    - name: 安装 Hexo
+      run: |
+        npm install hexo-cli -g
+        npm install
+
+    - name: 缓存 Hexo
+      uses: actions/cache@v2
+      id: cache
+      with:
+        path: node_modules
+        key: ${{runner.OS}}-${{hashFiles('**/package-lock.json')}}
+
+    - name: 安装依赖
+      if: steps.cache.outputs.cache-hit != 'true'
+      run: |
+        npm install --save
+
+    - name: 生成私钥
+      env:
+        HEXO_DEPLOY_PRIVATE_KEY: ${{ secrets.HEXO_DEPLOY }}
+        TEST_CONFIG: ${{ secrets.TEST_CONFIG }}
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$HEXO_DEPLOY" > ~/.ssh/id_rsa_test
+        echo "$TEST_CONFIG" > ~/.ssh/config
+        chmod 600 ~/.ssh/id_rsa_test
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: 配置 Git 信息
+      run: |
+        git config --global user.name 'jwj1342'
+        git config --global user.email '739151564@qq.com'
+
+    - name: 部署 Hexo
+      run: |
+        hexo clean
+        hexo generate
+        hexo deploy
