@@ -44,6 +44,7 @@ jobs:
       run: |
         git config --global user.name "jwj1342"
         git config --global user.email "739151564@qq.com"
+        ssh -vT git@github.com
     - name: 部署 Hexo
       run: |
         hexo clean
