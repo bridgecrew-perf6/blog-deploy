@@ -44,8 +44,6 @@ jobs:
       run: |
         git config --global user.name "jwj1342"
         git config --global user.email "739151564@qq.com"
-        eval `ssh-agent -s`
-        ssh-add ~/.ssh/id_rsa
     - name: 部署 Hexo
       run: |
         hexo clean
